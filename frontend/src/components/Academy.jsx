@@ -93,6 +93,7 @@ export function Academy({ student, allQuestions=[], onBack }) {
   if(viewState==='read'&&activeChapter){
     let pdfPage=1,mdContent=cleanContentMd(activeChapter.content_md||'');
     const pm=mdContent.match(/\[PDF_PAGE:(\d+)\]/);if(pm){pdfPage=Number(pm[1]);mdContent=mdContent.replace(/\[PDF_PAGE:\d+\]\n?/,'');}
+    else{const ip=mdContent.match(/_p_(\d+)_/);if(ip)pdfPage=Number(ip[1]);}
     const hasRich=mdContent.includes('![Image]')||mdContent.includes('[Link:');
     return(
       <div className="min-h-screen bg-[#f8faff] rtl font-sans flex flex-col" dir="rtl">
@@ -164,9 +165,18 @@ export function Academy({ student, allQuestions=[], onBack }) {
           ):(
             <div className="space-y-3">
               <div className={`rounded-2xl p-4 mb-1 text-center font-black text-lg ${isC?'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400':'bg-red-500/20 border border-red-500/30 text-red-400'}`}>{isC?'✅ נכון! כל הכבוד':'❌ לא נכון — בפעם הבאה!'}</div>
-              {currentQ.displayOpts.map((opt,i)=>{const isCO=i===currentQ.correctIdx,isSO=i===selected,isWO=isSO&&!isCO;return opt&&<div key={i} className={`p-4 rounded-2xl border flex items-center gap-4 ${isCO?'bg-emerald-500/15 border-emerald-500/40':isWO?'bg-red-500/15 border-red-500/40':'bg-white/3 border-white/5 opacity-40'}`}><span className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center font-black text-sm ${isCO?'bg-emerald-500 text-white':isWO?'bg-red-500 text-white':'border border-white/10 text-slate-600'}`}>{isCO?'✓':isWO?'✗':['א','ב','ג','ד'][i]}</span><span className={`flex-1 font-semibold ${isCO?'text-emerald-300 font-black':isWO?'text-red-300':'text-slate-600'}`} dir="rtl">{opt}&#x200F;</span></div>;})}
-              {!aiHint?<button onClick={askAI} disabled={loadingHint} className="w-full mt-1 bg-blue-600/10 border border-blue-500/20 text-blue-400 font-bold py-3 rounded-2xl text-sm hover:bg-blue-600/20 transition-all active:scale-95 flex items-center justify-center gap-2">{loadingHint?<span className="animate-pulse">⏳ מורה AI...</span>:'🤖 הסבר מהמורה AI'}</button>:<div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl text-sm text-amber-100 leading-relaxed"><p className="font-black text-amber-400 mb-2">💡 הסבר:</p><p className="whitespace-pre-wrap">{aiHint}</p></div>}
-              <button onClick={nextQ} className="w-full bg-gradient-to-l from-blue-600 to-indigo-600 text-white font-black text-xl py-4 rounded-2xl shadow-[0_0_20px_rgba(79,142,247,0.3)] active:scale-95 transition-all mt-1">{qIdx+1<gameQuestions.length?'הבא ⏭️':'סיים סשן 🏁'}</button>
+              {currentQ.displayOpts.map((opt,i)=>{const isCO=i===currentQ.correctIdx,isSO=i===selected,isWO=isSO&&!isCO;return opt&&<div key={i} className={`p-4 rounded-2xl border-2 flex items-center gap-4 transition-all
+                    ${isCO?'bg-emerald-500 border-emerald-400':''}
+                    ${isWO?'bg-red-500/20 border-red-500':''}
+                    ${!isCO&&!isWO?'bg-white/5 border-white/10 opacity-40':''}`}>
+                <span className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center font-black text-sm
+                  ${isCO?'bg-white text-emerald-600':''}
+                  ${isWO?'bg-red-500 text-white':''}
+                  ${!isCO&&!isWO?'border border-white/10 text-slate-600':''}`}>{isCO?'✓':isWO?'✗':['א','ב','ג','ד'][i]}</span>
+                <span className={`flex-1 font-semibold ${isCO?'text-white font-black':isWO?'text-red-200':'text-slate-600'}`} dir="rtl">{opt}&#x200F;</span>
+              </div>;})}
+              {!aiHint?<button onClick={askAI} disabled={loadingHint} className="w-full mt-1 bg-blue-600/10 border border-blue-500/20 text-blue-400 font-bold py-3 rounded-2xl text-sm hover:bg-blue-600/20 transition-all active:scale-95 flex items-center justify-center gap-2">{loadingHint?<span className="animate-pulse">⏳ מורה AI מסביר...</span>:'🤖 הסבר מהמורה AI'}</button>:<div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl text-sm text-amber-100 leading-relaxed"><p className="font-black text-amber-400 mb-2">💡 הסבר המורה:</p><p className="whitespace-pre-wrap">{aiHint.replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1')}</p></div>}
+              <button onClick={nextQ} className="w-full bg-gradient-to-l from-blue-600 to-indigo-600 text-white font-black text-xl py-4 rounded-2xl shadow-[0_0_20px_rgba(79,142,247,0.3)] active:scale-95 transition-all mt-1">{qIdx+1<gameQuestions.length?'← שאלה הבאה':'סיים סשן 🏁'}</button>
             </div>
           )}
         </div>
