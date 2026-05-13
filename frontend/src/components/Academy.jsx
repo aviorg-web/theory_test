@@ -99,14 +99,14 @@ export function Academy({ student, allQuestions=[], onBack }) {
         <div className="bg-white border-b border-slate-100 px-4 py-3 flex justify-between items-center sticky top-0 z-10 shadow-sm">
           <button onClick={()=>setViewState('list')} className="text-slate-500 font-bold text-sm hover:text-slate-800 transition-colors">← חזור</button>
           <div className="text-center"><p className="text-xs text-blue-500 font-bold">פרק {activeChapter.chapter_number}</p><p className="text-sm font-black text-slate-800 truncate max-w-[180px]">{activeChapter.title}</p></div>
-          {hasRich?<button onClick={()=>setShowPdf(!showPdf)} className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">{showPdf?'📄 טקסט':'🖼️ PDF'}</button>:<div className="w-16"/>}
+          <button onClick={()=>setShowPdf(!showPdf)} className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition-all">{showPdf?'📄 טקסט חכם':'📖 חוברת מקור'}</button>
         </div>
         <div className="flex-1 max-w-2xl mx-auto w-full p-4">
-          {(showPdf||!hasRich)?<div className="h-[70vh] rounded-2xl overflow-hidden border border-slate-200 shadow-sm"><iframe src={`/study_book.pdf#page=${pdfPage}`} className="w-full h-full border-0" title="PDF"/></div>:
+          {showPdf?<div className="h-[70vh] rounded-2xl overflow-hidden border border-slate-200 shadow-sm"><iframe src={`/study_book.pdf#page=${pdfPage}`} className="w-full h-full border-0" title="PDF"/></div>:
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
               <div className="prose prose-blue max-w-none rtl text-right" dir="rtl">
                 <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
-                  img:({node,...p})=><img {...p} className="mx-auto rounded-xl shadow-md my-4 max-h-72"/>,
+                  img:({node,...p})=>{const [hide,setHide]=React.useState(false);if(hide)return null;return <img {...p} className="mx-auto rounded-xl shadow-md my-4 max-h-72" onLoad={e=>{if(e.target.naturalWidth<80||e.target.naturalHeight<80)setHide(true);}} onError={()=>setHide(true)}/>;},
                   h1:({node,...p})=><h1 {...p} className="text-2xl font-black text-blue-900 mb-4" dir="rtl"/>,
                   h2:({node,...p})=><h2 {...p} className="text-xl font-bold text-blue-800 mb-3 mt-6" dir="rtl"/>,
                   h3:({node,...p})=><h3 {...p} className="text-lg font-bold text-blue-700 mb-2 mt-5" dir="rtl"/>,

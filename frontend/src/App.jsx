@@ -92,7 +92,8 @@ function App() {
           <button onClick={() => { setNextViewAfterLogin('academy'); setView('student_login'); }} className="w-full bg-blue-600/20 text-blue-300 border border-blue-500/30 py-4 rounded-2xl font-bold text-lg active:scale-95 transition-all flex items-center justify-center gap-3 hover:bg-blue-600/30">
             <span className="text-2xl">📚</span> האקדמיה לנהיגה
           </button>
-          <button onClick={() => setView('admin_login')} className="w-full text-slate-500 py-3 rounded-2xl font-bold text-sm hover:text-slate-300">כניסת צוות (Admin)</button>
+          <button onClick={() => setView('admin_login')} className="w-full bg-white/5 border border-white/15 text-slate-400 py-3 rounded-2xl font-bold text-sm hover:bg-white/10 hover:text-white transition-all">🔐 כניסת צוות (Admin)</button>
+          <p className="text-center text-slate-600 text-xs mt-4">© כל הזכויות שמורות — אבי שוורץ</p>
         </div>
       </div>
     </div>
@@ -159,7 +160,7 @@ function App() {
         <div className="h-1 bg-slate-100"><div className="h-1 bg-blue-500 transition-all duration-500" style={{ width: `${pBar}%` }}/></div>
         <div className="flex-1 max-w-2xl mx-auto w-full p-4 pt-6 flex flex-col">
           {currentQ.vId && <div className="mb-5 rounded-2xl overflow-hidden aspect-video bg-black shadow-lg"><iframe className="w-full h-full" src={`https://www.youtube.com/embed/${currentQ.vId}`} frameBorder="0" allowFullScreen/></div>}
-          {currentQ.image && !currentQ.vId && !imgErr && <div className="mb-5 rounded-2xl bg-white border border-slate-200 p-3 cursor-zoom-in flex justify-center" onClick={() => setZoomImg(currentQ.image)}><img src={currentQ.image} alt="sign" className="max-h-56 object-contain" onError={() => setImgErr(true)}/></div>}
+          {currentQ.image && !currentQ.vId && !imgErr && <div className="mb-5 rounded-2xl bg-white border-2 border-slate-200 p-4 flex justify-center cursor-zoom-in shadow-sm" onClick={() => setZoomImg(currentQ.image)}><img src={currentQ.image} alt="sign" className="max-h-56 object-contain" onError={() => setImgErr(true)}/></div>}
           <h2 className="text-xl font-bold text-slate-900 mb-6 leading-relaxed" dir="rtl">{currentQ.displayQ}&#x200F;</h2>
           {!showAnswer ? (
             <div className="space-y-3">
