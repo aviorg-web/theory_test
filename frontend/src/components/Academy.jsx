@@ -155,6 +155,7 @@ export function Academy({ student, allQuestions=[], onBack }) {
           {currentQ.vId&&<div className="mb-5 rounded-2xl overflow-hidden aspect-video bg-black shadow-xl border border-white/10"><iframe className="w-full h-full" src={`https://www.youtube.com/embed/${currentQ.vId}`} frameBorder="0" allowFullScreen/></div>}
           {currentQ.image&&!currentQ.vId&&!imgErr&&<div className="mb-5 rounded-2xl bg-white/5 border border-white/10 p-3 flex justify-center cursor-zoom-in" onClick={()=>setZoomImg(currentQ.image)}><img src={currentQ.image} alt="sign" className="max-h-52 object-contain" onError={()=>setImgErr(true)}/></div>}
           <h2 className={`font-black text-white leading-tight text-right mb-6 ${currentQ.displayQ.length>90?'text-lg':'text-2xl'}`} dir="rtl">{currentQ.displayQ}&#x200F;</h2>
+          <div className="text-xs text-slate-500 mb-2 text-left">debug: correctIdx={currentQ.correctIdx} | raw={currentQ.correct_answer_index ?? currentQ.correct_answer}</div>
           {!showExpl?(
             <div className="space-y-3">
               {currentQ.displayOpts.map((opt,i)=>opt&&<button key={i} onClick={()=>handleAnswer(i)} className="w-full text-right p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-blue-600/20 hover:border-blue-500/40 active:scale-[0.98] flex items-center gap-4 transition-all group">
