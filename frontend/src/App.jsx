@@ -94,7 +94,7 @@ function App() {
           </button>
           <button onClick={() => setView('admin_login')} className="w-full bg-white/5 border border-white/15 text-slate-400 py-3 rounded-2xl font-bold text-sm hover:bg-white/10 hover:text-white transition-all">🔐 כניסת צוות (Admin)</button>
           <p className="text-center text-slate-600 text-xs mt-4">© כל הזכויות שמורות — אבי שוורץ</p>
-          <p className="text-center text-slate-700 text-xs mt-1">v1.2</p>
+          <p className="text-center text-slate-700 text-xs mt-1">v1.3</p>
         </div>
       </div>
     </div>
@@ -182,8 +182,8 @@ function App() {
                   <span className={`flex-1 font-semibold ${isC?'text-emerald-900 font-black':isW?'text-red-900':'text-slate-400'}`} dir="rtl">{opt}&#x200F;</span>
                 </div>;
               })}
-              <button onClick={nextQuestion} className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-lg active:scale-95">{idx+1 < questions.length ? 'שאלה הבאה =>' : 'סיים מבחן'}</button>
-<TestAIButton question={currentQ} answer={userAnswers[userAnswers.length-1]} />
+              <button onClick={nextQuestion} className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-lg active:scale-95">{idx+1 < questions.length ? 'שאלה הבאה ←' : 'סיים מבחן'}</button>
+              <TestAIButton question={currentQ} answer={userAnswers[userAnswers.length-1]} />
             </div>
           )}
         </div>
@@ -233,7 +233,35 @@ function App() {
   return <div className="h-screen bg-[#f0f7ff] flex items-center justify-center font-bold text-2xl text-slate-400">טוען...</div>;
 }
 
-function ReviewItem({ ans, index, setZoomImg }) {
+function TestAIButton({ question, answer }) {
+  const [hint, setHint] = useState('');
+  const [loading, setLoading] = useState(false);
+  if (!answer || answer.isCorrect) return null; // רק כשטועים
+  const ask = async () => {
+    setLoading(true);
+    try {
+      const { data } = await supabase.functions.invoke('explain-error', {
+        body: {
+          question: question.displayQ,
+          selectedOption: answer.selected === -1 ? 'דילגתי' : (question.displayOpts[answer.selected] || ''),
+          correctOption: question.displayOpts[question.correctIdx] || ''
+        }
+      });
+      setHint((data?.explanation || 'לא התקבל הסבר.').replace(/\*\*(.+?)\*\*/g,'$1'));
+    } catch { setHint('שגיאת תקשורת.'); }
+    setLoading(false);
+  };
+  return !hint
+    ? <button onClick={ask} disabled={loading} className="w-full mt-2 bg-amber-50 border border-amber-200 text-amber-700 py-3 rounded-2xl font-bold text-sm hover:bg-amber-100 transition-all active:scale-95">
+        {loading ? <span className="animate-pulse">⏳ מורה AI מסביר...</span> : '💡 למה טעיתי?'}
+      </button>
+    : <div className="mt-2 bg-amber-50 border border-amber-200 p-4 rounded-2xl text-sm text-slate-800 leading-relaxed">
+        <p className="font-black text-amber-700 mb-1">🤖 הסבר המורה:</p>
+        <p className="whitespace-pre-wrap">{hint}</p>
+      </div>;
+}
+
+
   const [explanation, setExplanation] = useState('');
   const [loading, setLoading] = useState(false);
   const askAI = async () => {
@@ -267,31 +295,5 @@ function ReviewItem({ ans, index, setZoomImg }) {
     </div>
   );
 }
-function TestAIButton({ question, answer }) {
-  const [hint, setHint] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-  if (!answer || answer.isCorrect) return null;
-  const ask = async () => {
-    setLoading(true);
-    try {
-      const { data } = await supabase.functions.invoke('explain-error', {
-        body: {
-          question: question.displayQ,
-          selectedOption: answer.selected === -1 ? 'דילגתי' : (question.displayOpts[answer.selected] || ''),
-          correctOption: question.displayOpts[question.correctIdx] || ''
-        }
-      });
-      setHint((data?.explanation || 'לא התקבל הסבר.').replace(/\*\*(.+?)\*\*/g,'$1'));
-    } catch { setHint('שגיאת תקשורת.'); }
-    setLoading(false);
-  };
-  return !hint
-    ? <button onClick={ask} disabled={loading} className="w-full mt-2 bg-amber-50 border border-amber-200 text-amber-700 py-3 rounded-2xl font-bold text-sm hover:bg-amber-100 transition-all active:scale-95">
-        {loading ? <span className="animate-pulse">⏳ מורה AI מסביר...</span> : '💡 למה טעיתי?'}
-      </button>
-    : <div className="mt-2 bg-amber-50 border border-amber-200 p-4 rounded-2xl text-sm text-slate-800 leading-relaxed">
-        <p className="font-black text-amber-700 mb-1">🤖 הסבר המורה:</p>
-        <p className="whitespace-pre-wrap">{hint}</p>
-      </div>;
-}
+
 export default App;
