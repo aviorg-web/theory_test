@@ -107,7 +107,7 @@ export function Academy({ student, allQuestions=[], onBack }) {
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
               <div className="prose prose-blue max-w-none rtl text-right" dir="rtl">
                 <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
-                  img:({node,...p})=>{const [hide,setHide]=React.useState(false);if(hide)return null;return <img {...p} className="mx-auto rounded-xl shadow-md my-4 max-h-72" onLoad={e=>{if(e.target.naturalWidth<80||e.target.naturalHeight<80)setHide(true);}} onError={()=>setHide(true)}/>;},
+                  img:({node,...p})=>{const [hide,setHide]=React.useState(false);if(hide)return null;return <img {...p} className="mx-auto rounded-xl shadow-md my-4 max-h-72" onLoad={e=>{if(e.target.naturalWidth<100||e.target.naturalHeight<80)setHide(true);}} onError={()=>setHide(true)}/>;},
                   h1:({node,...p})=><h1 {...p} className="text-2xl font-black text-blue-900 mb-4" dir="rtl"/>,
                   h2:({node,...p})=><h2 {...p} className="text-xl font-bold text-blue-800 mb-3 mt-6" dir="rtl"/>,
                   h3:({node,...p})=><h3 {...p} className="text-lg font-bold text-blue-700 mb-2 mt-5" dir="rtl"/>,
@@ -155,7 +155,7 @@ export function Academy({ student, allQuestions=[], onBack }) {
           {currentQ.vId&&<div className="mb-5 rounded-2xl overflow-hidden aspect-video bg-black shadow-xl border border-white/10"><iframe className="w-full h-full" src={`https://www.youtube.com/embed/${currentQ.vId}`} frameBorder="0" allowFullScreen/></div>}
           {currentQ.image&&!currentQ.vId&&!imgErr&&<div className="mb-5 rounded-2xl bg-white/5 border border-white/10 p-3 flex justify-center cursor-zoom-in" onClick={()=>setZoomImg(currentQ.image)}><img src={currentQ.image} alt="sign" className="max-h-52 object-contain" onError={()=>setImgErr(true)}/></div>}
           <h2 className={`font-black text-white leading-tight text-right mb-6 ${currentQ.displayQ.length>90?'text-lg':'text-2xl'}`} dir="rtl">{currentQ.displayQ}&#x200F;</h2>
-          <div className="text-xs text-slate-500 mb-2 text-left">debug: correctIdx={currentQ.correctIdx} | raw={currentQ.correct_answer_index ?? currentQ.correct_answer}</div>
+          
           {!showExpl?(
             <div className="space-y-3">
               {currentQ.displayOpts.map((opt,i)=>opt&&<button key={i} onClick={()=>handleAnswer(i)} className="w-full text-right p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-blue-600/20 hover:border-blue-500/40 active:scale-[0.98] flex items-center gap-4 transition-all group">

@@ -94,7 +94,7 @@ function App() {
           </button>
           <button onClick={() => setView('admin_login')} className="w-full bg-white/5 border border-white/15 text-slate-400 py-3 rounded-2xl font-bold text-sm hover:bg-white/10 hover:text-white transition-all">🔐 כניסת צוות (Admin)</button>
           <p className="text-center text-slate-600 text-xs mt-4">© כל הזכויות שמורות — אבי שוורץ</p>
-          <p className="text-center text-slate-700 text-xs mt-1">v1.1</p>
+          <p className="text-center text-slate-700 text-xs mt-1">v1.2</p>
         </div>
       </div>
     </div>
@@ -182,7 +182,8 @@ function App() {
                   <span className={`flex-1 font-semibold ${isC?'text-emerald-900 font-black':isW?'text-red-900':'text-slate-400'}`} dir="rtl">{opt}&#x200F;</span>
                 </div>;
               })}
-              <button onClick={nextQuestion} className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-lg active:scale-95">{idx+1 < questions.length ? 'שאלה הבאה ➜' : 'סיים מבחן'}</button>
+              <button onClick={nextQuestion} className="w-full mt-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-lg active:scale-95">{idx+1 < questions.length ? 'שאלה הבאה =>' : 'סיים מבחן'}</button>
+<TestAIButton question={currentQ} answer={userAnswers[userAnswers.length-1]} />
             </div>
           )}
         </div>
