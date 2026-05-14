@@ -151,13 +151,36 @@ export const parseQuestion = (q) => {
   const displayOpts = rawOpts.map(o => cleanOption(String(o || '')));
 
   // שלב 6: correctIdx — תמיד 0-based
-  let rawCorrect = q.correct_answer_index ?? q.correct_answer ?? q.correct;
-  let correctIdx = Number(rawCorrect);
-  if (correctIdx >= 1 && correctIdx <= 4) correctIdx -= 1; // 1-based → 0-based
-  if (correctIdx < 0 || correctIdx > 3) {
-    console.warn(`[parseQuestion] correctIdx=${correctIdx} out of range, q.id=${q.id || q.question_id}`);
-    correctIdx = 0;
+  // מנסה כל שמות השדה האפשריים
+  const rawCorrect =
+    q.correct_answer_index ??
+    q.correctAnswerIndex ??
+    q.correct_answer ??
+    q.correctAnswer ??
+    q.correct ??
+    q.answer_index ??
+    q.answerIndex ??
+    null;
+
+  let correctIdx = rawCorrect !== null && rawCorrect !== undefined
+    ? parseInt(String(rawCorrect).trim(), 10)
+    : NaN;
+
+  // אם NaN — נסה לחפש בכל מפתחות האובייקט
+  if (isNaN(correctIdx)) {
+    const keys = Object.keys(q);
+    const correctKey = keys.find(k => k.toLowerCase().includes('correct') || k.toLowerCase().includes('answer'));
+    if (correctKey) correctIdx = parseInt(String(q[correctKey]).trim(), 10);
+    console.warn('[parseQuestion] NaN correctIdx, tried key:', correctKey, '=', q[correctKey], '| all keys:', keys.join(','));
   }
+
+  if (isNaN(correctIdx)) correctIdx = 1; // fallback: תמיד תשובה ב
+
+  // המרה מ-1-based ל-0-based
+  if (correctIdx >= 1 && correctIdx <= 4) correctIdx -= 1;
+
+  // וידוא תחום תקין
+  if (correctIdx < 0 || correctIdx > 3) correctIdx = 0;
 
   // שלב 7: תמונה
   const rawImg = q.image_url || q.image_path || null;
