@@ -94,6 +94,7 @@ function App() {
           </button>
           <button onClick={() => setView('admin_login')} className="w-full bg-white/5 border border-white/15 text-slate-400 py-3 rounded-2xl font-bold text-sm hover:bg-white/10 hover:text-white transition-all">🔐 כניסת צוות (Admin)</button>
           <p className="text-center text-slate-600 text-xs mt-4">© כל הזכויות שמורות — אבי שוורץ</p>
+          <p className="text-center text-slate-700 text-xs mt-1">v1.0</p>
         </div>
       </div>
     </div>
