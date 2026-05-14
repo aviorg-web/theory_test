@@ -262,6 +262,7 @@ function TestAIButton({ question, answer }) {
 }
 
 
+function ReviewItem({ ans, index, setZoomImg }) {
   const [explanation, setExplanation] = useState('');
   const [loading, setLoading] = useState(false);
   const askAI = async () => {
