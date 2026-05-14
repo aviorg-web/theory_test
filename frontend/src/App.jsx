@@ -267,5 +267,31 @@ function ReviewItem({ ans, index, setZoomImg }) {
     </div>
   );
 }
-
+function TestAIButton({ question, answer }) {
+  const [hint, setHint] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  if (!answer || answer.isCorrect) return null;
+  const ask = async () => {
+    setLoading(true);
+    try {
+      const { data } = await supabase.functions.invoke('explain-error', {
+        body: {
+          question: question.displayQ,
+          selectedOption: answer.selected === -1 ? 'דילגתי' : (question.displayOpts[answer.selected] || ''),
+          correctOption: question.displayOpts[question.correctIdx] || ''
+        }
+      });
+      setHint((data?.explanation || 'לא התקבל הסבר.').replace(/\*\*(.+?)\*\*/g,'$1'));
+    } catch { setHint('שגיאת תקשורת.'); }
+    setLoading(false);
+  };
+  return !hint
+    ? <button onClick={ask} disabled={loading} className="w-full mt-2 bg-amber-50 border border-amber-200 text-amber-700 py-3 rounded-2xl font-bold text-sm hover:bg-amber-100 transition-all active:scale-95">
+        {loading ? <span className="animate-pulse">⏳ מורה AI מסביר...</span> : '💡 למה טעיתי?'}
+      </button>
+    : <div className="mt-2 bg-amber-50 border border-amber-200 p-4 rounded-2xl text-sm text-slate-800 leading-relaxed">
+        <p className="font-black text-amber-700 mb-1">🤖 הסבר המורה:</p>
+        <p className="whitespace-pre-wrap">{hint}</p>
+      </div>;
+}
 export default App;
