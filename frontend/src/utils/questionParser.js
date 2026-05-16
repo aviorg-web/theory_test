@@ -62,7 +62,7 @@ export const cleanText = (t) => {
   // FIX 2: נקודה בין מילים עבריות ללא רווח "בסרטון.יותר" → "בסרטון. יותר"
   s = s.replace(/([א-ת])\.([א-ת])/g, '$1. $2');
 
-  // FIX 3: סימן שאלה שנדחק לאמצע "מוטלת ?החובה" → "מוטלת החובה"
+  // FIX 3: סימן שאלה באמצע "מוטלת ?החובה" → "מוטלת החובה"
   s = s.replace(/\s\?\s*([א-ת])/g, ' $1');
 
   // FIX 4: רווחים לפני פיסוק
@@ -70,6 +70,9 @@ export const cleanText = (t) => {
 
   // FIX 5: נקודה סוררת בתחילה
   s = s.replace(/^\.\s*/, '');
+
+  // FIX 6: פסקאות — שורות ברצף בלי רווח "שלב1.שלב2" → שורות
+  // כבר מטופל ע"י FIX 2
 
   s = s.replace(/\s+/g, ' ');
   return s.trim();
@@ -151,33 +154,45 @@ export const parseQuestion = (q) => {
   const displayOpts = rawOpts.map(o => cleanOption(String(o || '')));
 
   // שלב 6: correctIdx — תמיד 0-based
-  // מנסה כל שמות השדה האפשריים
-  const rawCorrect =
-    q.correct_answer_index ??
-    q.correctAnswerIndex ??
-    q.correct_answer ??
-    q.correctAnswer ??
-    q.correct ??
-    q.answer_index ??
-    q.answerIndex ??
-    null;
-
-  let correctIdx = rawCorrect !== null && rawCorrect !== undefined
-    ? parseInt(String(rawCorrect).trim(), 10)
-    : NaN;
-
-  // אם NaN — נסה לחפש בכל מפתחות האובייקט
-  if (isNaN(correctIdx)) {
-    const keys = Object.keys(q);
-    const correctKey = keys.find(k => k.toLowerCase().includes('correct') || k.toLowerCase().includes('answer'));
-    if (correctKey) correctIdx = parseInt(String(q[correctKey]).trim(), 10);
-    console.warn('[parseQuestion] NaN correctIdx, tried key:', correctKey, '=', q[correctKey], '| all keys:', keys.join(','));
+  // ── OPTIONS: Supabase מאחסן option_1..option_4 (לא מערך) ──────────────────
+  let rawOpts;
+  if (Array.isArray(q.options) && q.options.length >= 4) {
+    // פורמט seed JSON: options כמערך
+    rawOpts = q.options.slice(0, 4);
+  } else if (q.option_1 || q.option_2) {
+    // פורמט Supabase: option_1..option_4
+    rawOpts = [
+      q.option_1 ?? '',
+      q.option_2 ?? '',
+      q.option_3 ?? '',
+      q.option_4 ?? '',
+    ];
+  } else {
+    // אין תשובות — fallback לחילוץ מהטקסט
+    rawOpts = ['', '', '', ''];
   }
 
-  if (isNaN(correctIdx)) correctIdx = 1; // fallback: תמיד תשובה ב
+  // ── CORRECT INDEX ─────────────────────────────────────────────────────────
+  // Supabase מאחסן 1-based (1,2,3,4) → מחסירים 1 לקבלת 0-based
+  const rawCorrect =
+    q.correct_answer_index ??
+    q.correct_answer ??
+    null;
+
+  let correctIdx = rawCorrect !== null ? parseInt(String(rawCorrect).trim(), 10) : NaN;
+
+  if (isNaN(correctIdx)) {
+    // ניסיון אחרון — חיפוש בכל מפתחות האובייקט
+    const allKeys = Object.keys(q);
+    const ck = allKeys.find(k => k.toLowerCase().includes('correct'));
+    if (ck) correctIdx = parseInt(String(q[ck]).trim(), 10);
+    console.warn('[parseQuestion] correctIdx NaN, tried:', ck, '=', ck ? q[ck] : 'not found', '| keys:', allKeys.slice(0,8).join(','));
+  }
+
+  if (isNaN(correctIdx)) correctIdx = 1; // fallback
 
   // המרה מ-1-based ל-0-based
-  if (correctIdx >= 1 && correctIdx <= 4) correctIdx -= 1;
+  if (correctIdx >= 1 && correctIdx <= 4) correctIdx = correctIdx - 1;
 
   // וידוא תחום תקין
   if (correctIdx < 0 || correctIdx > 3) correctIdx = 0;

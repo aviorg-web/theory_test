@@ -112,10 +112,16 @@ export function Academy({ student, allQuestions=[], onBack }) {
                     if(hide)return null;
                     const src=String(p.src||'');
                     if(src.includes('logo')||src.includes('favicon'))return null;
+                    // סינון קוד QR — תמונות בהירות מאוד או כהות מאוד לרוב QR
                     return(
                       <div className="my-6 flex justify-center">
                         <img {...p} className="rounded-xl shadow-lg max-h-80 object-contain border border-slate-100"
-                          onLoad={e=>{const t=e.target;if(t.naturalWidth<100||t.naturalHeight<100)setHide(true);}}
+                          onLoad={e=>{
+                            const t=e.target;
+                            if(t.naturalWidth<100||t.naturalHeight<100){setHide(true);return;}
+                            // סינון QR: תמונות מרובעות קטנות עם יחס 1:1
+                            if(t.naturalWidth<250&&t.naturalHeight<250&&Math.abs(t.naturalWidth-t.naturalHeight)<20)setHide(true);
+                          }}
                           onError={()=>setHide(true)}/>
                       </div>
                     );

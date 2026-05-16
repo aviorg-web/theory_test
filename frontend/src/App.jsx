@@ -94,7 +94,7 @@ function App() {
           </button>
           <button onClick={() => setView('admin_login')} className="w-full bg-white/5 border border-white/15 text-slate-400 py-3 rounded-2xl font-bold text-sm hover:bg-white/10 hover:text-white transition-all">🔐 כניסת צוות (Admin)</button>
           <p className="text-center text-slate-600 text-xs mt-4">© כל הזכויות שמורות — אבי שוורץ</p>
-          <p className="text-center text-slate-700 text-xs mt-1">v1.3</p>
+          <p className="text-center text-slate-700 text-xs mt-1">v1.5</p>
         </div>
       </div>
     </div>
@@ -162,7 +162,7 @@ function App() {
         <div className="flex-1 max-w-2xl mx-auto w-full p-4 pt-6 flex flex-col">
           {currentQ.vId && <div className="mb-5 rounded-2xl overflow-hidden aspect-video bg-black shadow-lg"><iframe className="w-full h-full" src={`https://www.youtube.com/embed/${currentQ.vId}`} frameBorder="0" allowFullScreen/></div>}
           {currentQ.image && !currentQ.vId && !imgErr && <div className="mb-5 rounded-2xl bg-white border-2 border-slate-200 p-4 flex justify-center cursor-zoom-in shadow-sm" onClick={() => setZoomImg(currentQ.image)}><img src={currentQ.image} alt="sign" className="max-h-56 object-contain" onError={() => setImgErr(true)}/></div>}
-          <h2 className="text-xl font-bold text-slate-900 mb-6 leading-relaxed" dir="rtl">{currentQ.displayQ}&#x200F;</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-6 leading-loose" dir="rtl">{currentQ.displayQ}&#x200F;</h2>
           {!showAnswer ? (
             <div className="space-y-3">
               {currentQ.displayOpts.map((opt, i) => opt && (
@@ -255,9 +255,9 @@ function TestAIButton({ question, answer }) {
     ? <button onClick={ask} disabled={loading} className="w-full mt-2 bg-amber-50 border border-amber-200 text-amber-700 py-3 rounded-2xl font-bold text-sm hover:bg-amber-100 transition-all active:scale-95">
         {loading ? <span className="animate-pulse">⏳ מורה AI מסביר...</span> : '💡 למה טעיתי?'}
       </button>
-    : <div className="mt-2 bg-amber-50 border border-amber-200 p-4 rounded-2xl text-sm text-slate-800 leading-relaxed">
-        <p className="font-black text-amber-700 mb-1">🤖 הסבר המורה:</p>
-        <p className="whitespace-pre-wrap">{hint}</p>
+    : <div className="mt-2 bg-blue-50 border border-blue-200 p-4 rounded-2xl text-sm text-slate-900 leading-relaxed">
+        <p className="font-black text-blue-700 mb-1">🤖 הסבר המורה:</p>
+        <p className="whitespace-pre-wrap text-slate-800">{hint}</p>
       </div>;
 }
 
@@ -291,7 +291,7 @@ function ReviewItem({ ans, index, setZoomImg }) {
         })}
       </div>
       <div className="mt-4 pt-4 border-t border-slate-50">
-        {!explanation?<button onClick={askAI} disabled={loading} className="text-blue-600 font-bold text-sm hover:text-blue-800 flex items-center gap-2">{loading?<span className="animate-pulse">⏳ מנתח...</span>:(ans.isCorrect?'📚 הרחב ידע':'💡 למה טעיתי?')}</button>:<div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl text-sm leading-relaxed"><p className="font-black text-amber-800 mb-2">🤖 הסבר AI:</p><p className="whitespace-pre-wrap">{explanation}</p></div>}
+        {!explanation?<button onClick={askAI} disabled={loading} className="text-blue-600 font-bold text-sm hover:text-blue-800 flex items-center gap-2">{loading?<span className="animate-pulse">⏳ מנתח...</span>:(ans.isCorrect?'📚 הרחב ידע':'💡 למה טעיתי?')}</button>:<div className="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-sm leading-relaxed"><p className="font-black text-blue-800 mb-2">🤖 הסבר AI:</p><p className="whitespace-pre-wrap text-slate-800">{explanation}</p></div>}
       </div>
     </div>
   );
