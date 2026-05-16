@@ -126,17 +126,16 @@ export const parseQuestion = (q) => {
     .replace(/\s+[A-Za-z][A-Za-z0-9_-]{8,11}(?=\s|$)/g, '') // bare YouTube IDs
     .trim();
 
-  // שלב 3: options — תמיכה בשני פורמטים
+  // שלב 3: options — תמיכה בשני פורמטים (Supabase: option_1..4, seed: options[])
   let rawOpts;
   if (Array.isArray(q.options) && q.options.length >= 4) {
     rawOpts = q.options.slice(0, 4);
+  } else if (q.option_1 || q.option_2) {
+    rawOpts = [q.option_1 ?? '', q.option_2 ?? '', q.option_3 ?? '', q.option_4 ?? ''];
+  } else if (q.option1 || q.option2) {
+    rawOpts = [q.option1 ?? '', q.option2 ?? '', q.option3 ?? '', q.option4 ?? ''];
   } else {
-    rawOpts = [
-      q.option1 ?? q.option_1 ?? '',
-      q.option2 ?? q.option_2 ?? '',
-      q.option3 ?? q.option_3 ?? '',
-      q.option4 ?? q.option_4 ?? '',
-    ];
+    rawOpts = ['', '', '', ''];
   }
 
   // שלב 4: אם options ריקים, נסה לחלץ מהשאלה
@@ -153,26 +152,7 @@ export const parseQuestion = (q) => {
   const displayQ = cleanText(text);
   const displayOpts = rawOpts.map(o => cleanOption(String(o || '')));
 
-  // שלב 6: correctIdx — תמיד 0-based
-  // ── OPTIONS: Supabase מאחסן option_1..option_4 (לא מערך) ──────────────────
-  let rawOpts;
-  if (Array.isArray(q.options) && q.options.length >= 4) {
-    // פורמט seed JSON: options כמערך
-    rawOpts = q.options.slice(0, 4);
-  } else if (q.option_1 || q.option_2) {
-    // פורמט Supabase: option_1..option_4
-    rawOpts = [
-      q.option_1 ?? '',
-      q.option_2 ?? '',
-      q.option_3 ?? '',
-      q.option_4 ?? '',
-    ];
-  } else {
-    // אין תשובות — fallback לחילוץ מהטקסט
-    rawOpts = ['', '', '', ''];
-  }
-
-  // ── CORRECT INDEX ─────────────────────────────────────────────────────────
+  // שלב 6: correctIdx
   // Supabase מאחסן 1-based (1,2,3,4) → מחסירים 1 לקבלת 0-based
   const rawCorrect =
     q.correct_answer_index ??
