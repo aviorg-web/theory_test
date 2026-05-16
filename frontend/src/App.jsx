@@ -76,6 +76,11 @@ function App() {
   /* ── LANDING ── */
   if (view === 'landing') return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#060D1F] via-[#0D1B3E] to-[#0A1628] flex items-center justify-center p-4 rtl font-sans relative overflow-hidden">
+      {/* תמונת רקע */}
+      <div className="absolute inset-0 z-0">
+        <img src="/login-bg.png" alt="" className="w-full h-full object-cover opacity-20"/>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#060D1F]/80 via-[#0D1B3E]/70 to-[#0A1628]/80"/>
+      </div>
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"/>
       <div className="relative z-10 w-full max-w-sm">
         <div className="text-center mb-10">
@@ -94,7 +99,7 @@ function App() {
           </button>
           <button onClick={() => setView('admin_login')} className="w-full bg-white/5 border border-white/15 text-slate-400 py-3 rounded-2xl font-bold text-sm hover:bg-white/10 hover:text-white transition-all">🔐 כניסת צוות (Admin)</button>
           <p className="text-center text-slate-600 text-xs mt-4">© כל הזכויות שמורות — אבי שוורץ</p>
-          <p className="text-center text-slate-700 text-xs mt-1">v1.5</p>
+          <p className="text-center text-slate-700 text-xs mt-1">v1.6</p>
         </div>
       </div>
     </div>
