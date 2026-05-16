@@ -31,8 +31,8 @@ LOGO_XREFS = set()  # ימולא בזמן ריצה
 
 def is_logo_image(img_data, width, height):
     """מזהה לוגואים קטנים שאינם תוכן לימודי"""
-    # תמונות קטנות מאוד = לוגו/סמל
-    if width < 120 and height < 120: return True
+    # תמונות קטנות מאוד = לוגו/סמל (כמו סמל ה-"ל")
+    if width < 200 and height < 150: return True
     # יחס גובה/רוחב קיצוני = לוגו
     if width > 0 and height > 0:
         ratio = max(width, height) / min(width, height)
@@ -233,7 +233,7 @@ def extract_full_content(pdf_path, output_json, img_output_dir):
             for el in chapter_elements:
                 t = el["type"]
                 if t == "text":
-                    markdown_lines.append(el["content"] + "  ")
+                    markdown_lines.append(el["content"] + "\\")
                     if prev_type == "image":
                         markdown_lines.append("")  # רווח אחרי תמונה
                 elif t == "image":
