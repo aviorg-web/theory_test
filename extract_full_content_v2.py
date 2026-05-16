@@ -109,8 +109,8 @@ def extract_full_content(pdf_path, output_json, img_output_dir):
 
                     for y_key in sorted(lines_by_y.keys()):
                         line_words = lines_by_y[y_key]
-                        # מיון מילים מימין לשמאל (RTL)
-                        line_words.sort(key=lambda w: -w['x0'])
+                        # מיון מילים משמאל לימין (LTR)
+                        line_words.sort(key=lambda w: w['x0'])
                         line_text = ' '.join(w['text'] for w in line_words)
                         line_text = line_text.strip()
 
