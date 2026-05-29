@@ -167,22 +167,30 @@ def extract_full_content(pdf_path, output_json, img_output_dir):
                         img_h = bbox[3] - bbox[1]
 
                         try:
-                            base_image = fitz_doc.extract_image(xref)
-                            if not base_image: continue
-
-                            # בדיקת גודל תמונה מהנתונים האמיתיים
-                            img_bytes = base_image["image"]
                             try:
-                                pil_img = Image.open(io.BytesIO(img_bytes))
-                                real_w, real_h = pil_img.size
-                            except:
-                                real_w, real_h = int(img_w), int(img_h)
+                                pix = fitz.Pixmap(fitz_doc, xref)
+                                # Convert to RGB if it's CMYK or has a mask
+                                if pix.n - pix.alpha >= 4:
+                                    pix = fitz.Pixmap(fitz.csRGB, pix)
+                                img_bytes = pix.tobytes("png")
+                                real_w, real_h = pix.width, pix.height
+                                ext = "png"
+                                pix = None
+                            except Exception:
+                                base_image = fitz_doc.extract_image(xref)
+                                if not base_image: continue
+                                img_bytes = base_image["image"]
+                                ext = base_image["ext"]
+                                try:
+                                    pil_img = Image.open(io.BytesIO(img_bytes))
+                                    real_w, real_h = pil_img.size
+                                except Exception:
+                                    real_w, real_h = int(img_w), int(img_h)
 
                             # סינון לוגואים
                             if is_logo_image(img_bytes, real_w, real_h):
                                 continue
 
-                            ext = base_image["ext"]
                             img_filename = f"ch_{ch['chapter_number']}_p_{p_num+1}_img_{xref}.{ext}"
 
                             # סינון תמונות כפולות
@@ -233,18 +241,17 @@ def extract_full_content(pdf_path, output_json, img_output_dir):
             for el in chapter_elements:
                 t = el["type"]
                 if t == "text":
-                    markdown_lines.append(el["content"] + "\\")
-                    if prev_type == "image":
-                        markdown_lines.append("")  # רווח אחרי תמונה
+                    markdown_lines.append(el["content"])
+                    markdown_lines.append("") # paragraph spacing
                 elif t == "image":
-                    if prev_type == "text":
-                        markdown_lines.append("")  # רווח לפני תמונה
                     markdown_lines.append(f"![Image](extracted_media/{el['src']})")
                     markdown_lines.append("")
                 elif t == "video":
-                    markdown_lines.append(f"\n**[🎥 סרטון]({el['url']})**\n")
+                    markdown_lines.append(f"**[🎥 סרטון]({el['url']})**")
+                    markdown_lines.append("")
                 elif t == "link":
                     markdown_lines.append(f"*[קישור]({el['url']})*")
+                    markdown_lines.append("")
                 prev_type = t
 
             markdown_content = "\n".join(markdown_lines)
