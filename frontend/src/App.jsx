@@ -92,29 +92,28 @@ function App() {
 
   /* ── LANDING ── */
   if (view === 'landing') return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#060D1F] via-[#0D1B3E] to-[#0A1628] flex items-center justify-center p-4 rtl font-sans relative overflow-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4 rtl font-sans relative overflow-hidden">
       {/* תמונת רקע */}
       <div className="absolute inset-0 z-0">
-        <img src="/login-bg.png" alt="" className="w-full h-full object-cover opacity-40"/>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#060D1F] via-[#0D1B3E]/60 to-[#060D1F]/40"/>
+        <img src="/login-bg.png" alt="" className="w-full h-full object-cover opacity-10 mix-blend-multiply"/>
       </div>
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"/>
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-300/30 rounded-full blur-[100px]"/>
       <div className="relative z-10 w-full max-w-sm">
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-[0_0_40px_rgba(79,142,247,0.4)] mb-5">
             <span className="text-4xl">🚗</span>
           </div>
-          <h1 className="text-4xl font-black text-white">Theory AI</h1>
-          <p className="text-blue-400 text-sm font-medium mt-1">מערכת הכנה חכמה לתאוריה</p>
+          <h1 className="text-4xl font-black text-slate-800">Theory AI</h1>
+          <p className="text-blue-600 text-sm font-bold mt-1">מערכת הכנה חכמה לתאוריה</p>
         </div>
         <div className="space-y-3">
-          <button onClick={() => { setNextViewAfterLogin('test'); setView('student_login'); }} className="w-full bg-white text-slate-900 py-4 rounded-2xl font-black text-lg shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3 hover:bg-blue-50">
+          <button onClick={() => { setNextViewAfterLogin('test'); setView('student_login'); }} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-3 hover:bg-blue-700">
             <span className="text-2xl">⏱️</span> התחל מבחן
           </button>
-          <button onClick={() => { setNextViewAfterLogin('academy'); setView('student_login'); }} className="w-full bg-blue-600/20 text-blue-300 border border-blue-500/30 py-4 rounded-2xl font-bold text-lg active:scale-95 transition-all flex items-center justify-center gap-3 hover:bg-blue-600/30">
+          <button onClick={() => { setNextViewAfterLogin('academy'); setView('student_login'); }} className="w-full bg-white text-blue-700 border border-blue-200 py-4 rounded-2xl font-bold text-lg shadow-sm active:scale-95 transition-all flex items-center justify-center gap-3 hover:bg-blue-50">
             <span className="text-2xl">📚</span> האקדמיה לנהיגה
           </button>
-          <button onClick={() => setView('admin_login')} className="w-full bg-white/5 border border-white/15 text-slate-400 py-3 rounded-2xl font-bold text-sm hover:bg-white/10 hover:text-white transition-all">🔐 כניסת צוות (Admin)</button>
+          <button onClick={() => setView('admin_login')} className="w-full bg-slate-100 border border-slate-200 text-slate-600 py-3 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-all">🔐 כניסת צוות (Admin)</button>
           <p className="text-center text-slate-600 text-xs mt-4">© כל הזכויות שמורות — אבי שוורץ</p>
           <p className="text-center text-slate-700 text-xs mt-1">V4.1</p>
         </div>
@@ -131,20 +130,20 @@ function App() {
     const weakAreas = student ? getWeakAreas(student.tz, allQuestions) : [];
     const rc = readiness >= 80 ? '#34D399' : readiness >= 50 ? '#F59E0B' : '#F87171';
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#060D1F] to-[#0D1B3E] rtl font-sans p-4 pb-10">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 rtl font-sans p-4 pb-10">
         <div className="max-w-md mx-auto pt-8">
           <div className="flex justify-between items-start mb-8">
-            <div><p className="text-blue-400 text-sm font-bold">שלום,</p><h1 className="text-3xl font-black text-white">{student?.name} 👋</h1></div>
-            <button onClick={() => { setStudent(null); setView('landing'); }} className="text-slate-500 text-xs font-bold mt-2 hover:text-red-400 transition-colors">יציאה</button>
+            <div><p className="text-blue-600 text-sm font-bold">שלום,</p><h1 className="text-3xl font-black text-slate-800">{student?.name} 👋</h1></div>
+            <button onClick={() => { setStudent(null); setView('landing'); }} className="text-slate-500 text-xs font-bold mt-2 hover:text-red-500 transition-colors bg-white px-3 py-1.5 rounded-xl border border-slate-200">יציאה</button>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-6 mb-4 relative overflow-hidden">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 mb-4 relative overflow-hidden shadow-sm">
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px]" style={{ background: rc+'20' }}/>
-            <p className="text-slate-400 text-sm font-bold mb-1">ציון מוכנות</p>
-            <div className="flex items-end gap-3"><span className="text-6xl font-black" style={{ color: rc }}>{readiness}</span><span className="text-slate-500 font-bold text-lg mb-2">/ 100</span></div>
+            <p className="text-slate-500 text-sm font-bold mb-1">ציון מוכנות</p>
+            <div className="flex items-end gap-3"><span className="text-6xl font-black" style={{ color: rc }}>{readiness}</span><span className="text-slate-400 font-bold text-lg mb-2">/ 100</span></div>
             {readiness === 0 && <p className="text-slate-500 text-sm mt-2">התחל לתרגל כדי לראות את המוכנות שלך</p>}
-            {readiness > 0 && readiness < 60 && <p className="text-amber-400 text-sm mt-2 font-bold">💪 המשך לתרגל!</p>}
-            {readiness >= 60 && readiness < 85 && <p className="text-blue-300 text-sm mt-2 font-bold">📈 כמעט מוכן!</p>}
-            {readiness >= 85 && <p className="text-emerald-400 text-sm mt-2 font-bold">🏆 מוכן למבחן!</p>}
+            {readiness > 0 && readiness < 60 && <p className="text-amber-500 text-sm mt-2 font-bold">💪 המשך לתרגל!</p>}
+            {readiness >= 60 && readiness < 85 && <p className="text-blue-500 text-sm mt-2 font-bold">📈 כמעט מוכן!</p>}
+            {readiness >= 85 && <p className="text-emerald-500 text-sm mt-2 font-bold">🏆 מוכן למבחן!</p>}
           </div>
           {weakAreas.length > 0 && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-3xl p-5 mb-4">
@@ -157,9 +156,9 @@ function App() {
               <span className="text-2xl">📚</span>
               <div className="text-right"><div>האקדמיה לנהיגה</div><div className="text-xs font-medium text-blue-200">לימוד + תרגול חכם אדפטיבי</div></div>
             </button>
-            <button onClick={() => setView('test')} className="w-full bg-white/5 border border-white/10 text-white py-5 rounded-3xl font-black text-xl active:scale-95 transition-all flex items-center justify-center gap-3 hover:bg-white/10">
+            <button onClick={() => setView('test')} className="w-full bg-white border border-slate-200 text-slate-800 py-5 rounded-3xl font-black text-xl shadow-sm active:scale-95 transition-all flex items-center justify-center gap-3 hover:bg-slate-50">
               <span className="text-2xl">⏱️</span>
-              <div className="text-right"><div>מבחן תיאוריה מסכם</div><div className="text-xs font-medium text-slate-400">סימולציית בחינה • {testTotalQ} שאלות</div></div>
+              <div className="text-right"><div>מבחן תיאוריה מסכם</div><div className="text-xs font-medium text-slate-500">סימולציית בחינה • {testTotalQ} שאלות</div></div>
             </button>
           </div>
         </div>

@@ -54,12 +54,30 @@ export function Academy({ student, allQuestions=[], onBack }) {
     if(student){supabase.from('learning_progress').select('*').eq('student_id',student.tz).then(({data})=>{if(data)setCoins(data.reduce((s,p)=>s+(p.score||0),0));});}
   },[student]);
 
-  const chapterQMap=useMemo(()=>{const m={};allQuestions.forEach(q=>{const c=String(q.chapter_number||'');if(!m[c])m[c]=[];m[c].push(q);});return m;},[allQuestions]);
+  const chapterQMap = useMemo(() => {
+    const m = {};
+    allQuestions.forEach(q => {
+      // DB chapter is N-1. To get study book chapter, we do N+1
+      const dbNum = parseInt(q.chapter_number || '0', 10);
+      const studyCh = dbNum >= 1 ? String(dbNum + 1) : String(dbNum);
+      if (!m[studyCh]) m[studyCh] = [];
+      m[studyCh].push(q);
+    });
+    return m;
+  }, [allQuestions]);
   const currentQ=useMemo(()=>gameQuestions[qIdx]?parseQuestion(gameQuestions[qIdx]):null,[gameQuestions,qIdx]);
 
-  const startPractice=async(ch)=>{
+  const mapChapterToDB = (chNum) => {
+    const num = parseInt(chNum, 10);
+    // The database question chapters are shifted by -1 starting from chapter 2
+    if (num >= 2) return String(num - 1);
+    return String(num);
+  };
+
+  const startPractice = async (ch) => {
     setActiveChapter(ch);
-    const{data:qData}=await supabase.from('questions').select('*').eq('chapter_number',ch.chapter_number);
+    const dbChapter = mapChapterToDB(ch.chapter_number);
+    const qData = allQuestions.filter(q => String(q.chapter_number) === dbChapter);
     if(!qData?.length){alert('אין עדיין שאלות לפרק זה.');return;}
     const adaptive=student?selectAdaptiveQuestions(student.tz,qData,15):qData.sort(()=>Math.random()-0.5).slice(0,15);
     setGameQuestions(adaptive);setQIdx(0);setStreak(0);setAnswers([]);setSelected(null);setShowExpl(false);setAiHint('');setImgErr(false);
