@@ -20,6 +20,7 @@ function App() {
   const [idx, setIdx]                       = useState(0);
   const [score, setScore]                   = useState(0);
   const [timeLeft, setTimeLeft]             = useState(2400);
+  const [initialTestTime, setInitialTestTime] = useState(2400);
   const [testTotalQ, setTestTotalQ]         = useState(30);
   const [userAnswers, setUserAnswers]       = useState([]);
   const [imgErr, setImgErr]                 = useState(false);
@@ -33,6 +34,7 @@ function App() {
       const { data: setts } = await supabase.from('test_settings').select('*').single();
       const blocked = setts?.excluded_chapters ?? [];
       setTimeLeft(Number(setts?.test_time_seconds ?? 2400));
+      setInitialTestTime(Number(setts?.test_time_seconds ?? 2400));
       setTestTotalQ(Number(setts?.test_length ?? 30));
       const { data: clss } = await supabase.from('classes').select('*');
       const { data } = await supabase.from('questions').select('*');
@@ -60,6 +62,18 @@ function App() {
       if (score / testTotalQ >= 0.9) fireConfetti();
     }
   }, [view, student, score, hasSavedTarget]);
+
+  useEffect(() => {
+    if (view === 'test') {
+      setQuestions([...eligibleQuestions].sort(() => Math.random() - 0.5).slice(0, testTotalQ));
+      setIdx(0);
+      setScore(0);
+      setUserAnswers([]);
+      setHasSavedTarget(false);
+      setShowAnswer(false);
+      setTimeLeft(initialTestTime);
+    }
+  }, [view]);
 
   const currentQ = useMemo(() => parseQuestion(questions[idx]), [questions, idx]);
 
@@ -102,7 +116,7 @@ function App() {
           </button>
           <button onClick={() => setView('admin_login')} className="w-full bg-white/5 border border-white/15 text-slate-400 py-3 rounded-2xl font-bold text-sm hover:bg-white/10 hover:text-white transition-all">🔐 כניסת צוות (Admin)</button>
           <p className="text-center text-slate-600 text-xs mt-4">© כל הזכויות שמורות — אבי שוורץ</p>
-          <p className="text-center text-slate-700 text-xs mt-1">v1.7</p>
+          <p className="text-center text-slate-700 text-xs mt-1">V4.1</p>
         </div>
       </div>
     </div>

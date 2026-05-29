@@ -168,7 +168,7 @@ export function Academy({ student, allQuestions=[], onBack }) {
     const nextQ=()=>{setShowExpl(false);setSelected(null);setAiHint('');setImgErr(false);if(qIdx+1<gameQuestions.length)setQIdx(i=>i+1);else setViewState('result');};
     const askAI=async()=>{setLoadingHint(true);try{const{data}=await supabase.functions.invoke('explain-error',{body:{question:currentQ.displayQ,selectedOption:showExpl&&selected!==null?currentQ.displayOpts[selected]:'אני מתלבט',correctOption:currentQ.displayOpts[currentQ.correctIdx]}});setAiHint(data?.explanation||'לא התקבל הסבר.');}catch{setAiHint('שגיאת תקשורת.');}setLoadingHint(false);};
     return(
-      <div className="min-h-screen bg-[#0A0F1E] rtl font-sans flex flex-col" dir="rtl">
+      <div className="min-h-screen bg-[#0B1A3A] rtl font-sans flex flex-col" dir="rtl">
         <div className="px-4 pt-4 pb-3 flex justify-between items-center">
           <button onClick={()=>setViewState('list')} className="text-slate-500 font-bold text-sm hover:text-red-400 transition-colors bg-white/5 px-3 py-1.5 rounded-xl">יציאה</button>
           <div className="flex items-center gap-3">
@@ -218,7 +218,7 @@ export function Academy({ student, allQuestions=[], onBack }) {
   if(viewState==='result'){
     const correct=answers.filter(a=>a.correct).length,pct=Math.round((correct/answers.length)*100),great=pct>=80;
     return(
-      <div className="min-h-screen bg-[#0A0F1E] rtl font-sans flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-[#0B1A3A] rtl font-sans flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8"><div className="text-7xl mb-4">{great?'🌟':'💪'}</div><h2 className="text-3xl font-black text-white">{great?'עבודה מצוינת!':'ממשיכים!'}</h2><p className="text-slate-400 font-bold mt-1">{activeChapter?.title}</p></div>
           <div className="bg-white/5 border border-white/10 rounded-3xl p-8 mb-6 text-center">
