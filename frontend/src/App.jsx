@@ -16,6 +16,7 @@ function App() {
   const [student, setStudent]               = useState(null);
   const [questions, setQuestions]           = useState([]);
   const [allQuestions, setAllQuestions]     = useState([]);
+  const [eligibleQuestions, setEligibleQuestions] = useState([]);
   const [idx, setIdx]                       = useState(0);
   const [score, setScore]                   = useState(0);
   const [timeLeft, setTimeLeft]             = useState(2400);
@@ -37,7 +38,9 @@ function App() {
       const { data } = await supabase.from('questions').select('*');
       if (data) {
         setAllQuestions(data);
-        setQuestions(data.filter(q => !blocked.includes(String(q.chapter_number))).sort(() => Math.random() - 0.5).slice(0, Number(setts?.test_length ?? 30)));
+        const eligible = data.filter(q => !blocked.includes(String(q.chapter_number)));
+        setEligibleQuestions(eligible);
+        setQuestions(eligible.sort(() => Math.random() - 0.5).slice(0, Number(setts?.test_length ?? 30)));
       }
     };
     load();
@@ -213,7 +216,7 @@ function App() {
           </div>
           <div className="space-y-3">
             <button onClick={() => setView('review')} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold active:scale-95">סקירה עם AI 🤖</button>
-            <button onClick={() => { setScore(0); setIdx(0); setUserAnswers([]); setHasSavedTarget(false); setShowAnswer(false); setQuestions(q=>[...q].sort(()=>Math.random()-0.5)); setView('test'); }} className="w-full bg-white/5 border border-white/10 text-white py-4 rounded-2xl font-bold active:scale-95">מבחן חדש</button>
+            <button onClick={() => { setScore(0); setIdx(0); setUserAnswers([]); setHasSavedTarget(false); setShowAnswer(false); setQuestions([...eligibleQuestions].sort(()=>Math.random()-0.5).slice(0, testTotalQ)); setView('test'); }} className="w-full bg-white/5 border border-white/10 text-white py-4 rounded-2xl font-bold active:scale-95">מבחן חדש</button>
             <button onClick={() => setView('student_dashboard')} className="w-full text-slate-500 py-3 font-bold text-sm hover:text-white transition-colors">חזור לדשבורד</button>
           </div>
         </div>

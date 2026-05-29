@@ -168,10 +168,8 @@ def extract_full_content(pdf_path, output_json, img_output_dir):
 
                         try:
                             try:
-                                pix = fitz.Pixmap(fitz_doc, xref)
-                                # Convert to RGB if it's CMYK or has a mask
-                                if pix.n - pix.alpha >= 4:
-                                    pix = fitz.Pixmap(fitz.csRGB, pix)
+                                clip_rect = fitz.Rect(bbox)
+                                pix = fitz_page.get_pixmap(clip=clip_rect, alpha=False)
                                 img_bytes = pix.tobytes("png")
                                 real_w, real_h = pix.width, pix.height
                                 ext = "png"
@@ -236,23 +234,31 @@ def extract_full_content(pdf_path, output_json, img_output_dir):
 
             # ── BUILD MARKDOWN ──────────────────────────────────────────────
             markdown_lines = []
-            prev_type = None
+            prev_el = None
 
             for el in chapter_elements:
                 t = el["type"]
                 if t == "text":
-                    markdown_lines.append(el["content"])
-                    markdown_lines.append("") # paragraph spacing
+                    if prev_el and prev_el["type"] == "text":
+                        if abs(el["y"] - prev_el["y"]) < 30:
+                            markdown_lines.append(el["content"])
+                        else:
+                            markdown_lines.append("")
+                            markdown_lines.append(el["content"])
+                    else:
+                        if markdown_lines:
+                            markdown_lines.append("")
+                        markdown_lines.append(el["content"])
                 elif t == "image":
+                    if markdown_lines: markdown_lines.append("")
                     markdown_lines.append(f"![Image](extracted_media/{el['src']})")
-                    markdown_lines.append("")
                 elif t == "video":
+                    if markdown_lines: markdown_lines.append("")
                     markdown_lines.append(f"**[🎥 סרטון]({el['url']})**")
-                    markdown_lines.append("")
                 elif t == "link":
+                    if markdown_lines: markdown_lines.append("")
                     markdown_lines.append(f"*[קישור]({el['url']})*")
-                    markdown_lines.append("")
-                prev_type = t
+                prev_el = el
 
             markdown_content = "\n".join(markdown_lines)
             # ניקוי שורות ריקות מרובות

@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabase';
+const isValidIsraeliID = (id) => {
+  let strId = String(id).trim();
+  if (strId.length > 9 || strId.length < 5 || isNaN(strId)) return false;
+  strId = strId.padStart(9, '0');
+  let sum = 0, incNum;
+  for (let i = 0; i < 9; i++) {
+    incNum = Number(strId[i]) * ((i % 2) + 1);
+    sum += incNum > 9 ? incNum - 9 : incNum;
+  }
+  return sum % 10 === 0;
+};
 
 export function StudentLogin({ onLogin, onCancel, intendedView }) {
   const [name, setName] = useState('');
@@ -10,8 +21,12 @@ export function StudentLogin({ onLogin, onCancel, intendedView }) {
 
   const handleLogin = async () => {
     setError(null);
-    if (!name.trim() || tz.length < 8 || !pin.trim()) {
-      setError("אנא ודא שהזנת שם, תעודת זהות תקינה ופין-קוד.");
+    if (!name.trim() || !pin.trim()) {
+      setError("אנא ודא שהזנת שם, תעודת זהות ופין-קוד.");
+      return;
+    }
+    if (!isValidIsraeliID(tz)) {
+      setError("תעודת הזהות אינה תקינה.");
       return;
     }
 
