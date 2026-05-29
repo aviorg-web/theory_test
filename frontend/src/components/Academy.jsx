@@ -130,10 +130,10 @@ export function Academy({ student, allQuestions=[], onBack }) {
                   h2:({node,...p})=><h2 {...p} className="text-xl font-bold text-blue-800 mb-3 mt-7 border-b border-blue-50 pb-1" dir="rtl"/>,
                   h3:({node,...p})=><h3 {...p} className="text-lg font-bold text-blue-700 mb-2 mt-5" dir="rtl"/>,
                   strong:({node,...p})=><strong {...p} className="font-bold text-blue-900"/>,
-                  p:({node,...p})=><p {...p} className="mb-5 leading-loose text-slate-700 text-base" dir="rtl"/>,
+                  p:({node,...p})=><p {...p} className="mb-3 leading-relaxed text-slate-700 text-base" dir="rtl"/>,
                   li:({node,...p})=><li {...p} className="mb-2 text-slate-700 leading-relaxed mr-4" dir="rtl"/>,
-                  ul:({node,...p})=><ul {...p} className="mb-5 space-y-1" dir="rtl"/>,
-                  ol:({node,...p})=><ol {...p} className="mb-5 space-y-1" dir="rtl"/>,
+                  ul:({node,...p})=><ul {...p} className="mb-5 space-y-1 list-disc list-outside pr-5" dir="rtl"/>,
+                  ol:({node,...p})=><ol {...p} className="mb-5 space-y-1 list-decimal list-outside pr-5" dir="rtl"/>,
                   a:({node,...p})=>{
                     if(p.href?.includes('youtu'))return(
                       <div className="my-6 bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
@@ -181,18 +181,18 @@ export function Academy({ student, allQuestions=[], onBack }) {
         <div className="h-1 bg-white/5 mx-4 rounded-full"><div className="h-1 bg-blue-500 rounded-full transition-all duration-500" style={{width:`${prog}%`}}/></div>
         <div className="flex-1 max-w-2xl mx-auto w-full p-4 pt-6 flex flex-col">
           {currentQ.vId&&<div className="mb-5 rounded-2xl overflow-hidden aspect-video bg-black shadow-xl border border-white/10"><iframe className="w-full h-full" src={`https://www.youtube.com/embed/${currentQ.vId}`} frameBorder="0" allowFullScreen/></div>}
-          {currentQ.image&&!currentQ.vId&&!imgErr&&<div className="mb-5 rounded-2xl bg-white/5 border border-white/10 p-3 flex justify-center cursor-zoom-in" onClick={()=>setZoomImg(currentQ.image)}><img src={currentQ.image} alt="sign" className="max-h-52 object-contain" onError={()=>setImgErr(true)}/></div>}
+          {currentQ.image&&!currentQ.vId&&!imgErr&&<div className="mb-5 rounded-2xl bg-white border border-slate-200 p-3 flex justify-center cursor-zoom-in shadow-lg" onClick={()=>setZoomImg(currentQ.image)}><img src={currentQ.image} alt="sign" className="max-h-52 object-contain" onError={()=>setImgErr(true)}/></div>}
           <h2 className={`font-black text-white leading-tight text-right mb-6 ${currentQ.displayQ.length>90?'text-lg':'text-2xl'}`} dir="rtl">{currentQ.displayQ}&#x200F;</h2>
 
           {!showExpl?(
-            <div className="space-y-3">
+            <div className="space-y-3 pb-24">
               {currentQ.displayOpts.map((opt,i)=>opt&&<button key={i} onClick={()=>handleAnswer(i)} className="w-full text-right p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-blue-600/20 hover:border-blue-500/40 active:scale-[0.98] flex items-center gap-4 transition-all group">
                 <span className="w-9 h-9 shrink-0 rounded-xl border border-white/20 flex items-center justify-center text-slate-400 font-black text-sm group-hover:border-blue-400 group-hover:text-blue-400 transition-all">{['א','ב','ג','ד'][i]}</span>
                 <span className="flex-1 text-slate-200 font-semibold" dir="rtl">{opt}&#x200F;</span>
               </button>)}
             </div>
           ):(
-            <div className="space-y-3">
+            <div className="space-y-3 pb-24">
               <div className={`rounded-2xl p-4 mb-1 text-center font-black text-lg ${isC?'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400':'bg-red-500/20 border border-red-500/30 text-red-400'}`}>{isC?'✅ נכון! כל הכבוד':'❌ לא נכון — בפעם הבאה!'}</div>
               {currentQ.displayOpts.map((opt,i)=>{const isCO=i===currentQ.correctIdx,isSO=i===selected,isWO=isSO&&!isCO;return opt&&<div key={i} className={`p-4 rounded-2xl border-2 flex items-center gap-4 transition-all
                     ${isCO?'bg-emerald-500 border-emerald-400':''}
@@ -205,7 +205,7 @@ export function Academy({ student, allQuestions=[], onBack }) {
                 <span className={`flex-1 font-semibold ${isCO?'text-white font-black':isWO?'text-red-200':'text-slate-400'}`} dir="rtl">{opt}&#x200F;</span>
               </div>;})}
               {!aiHint?<button onClick={askAI} disabled={loadingHint} className="w-full mt-1 bg-blue-600/10 border border-blue-500/20 text-blue-400 font-bold py-3 rounded-2xl text-sm hover:bg-blue-600/20 transition-all active:scale-95 flex items-center justify-center gap-2">{loadingHint?<span className="animate-pulse">⏳ מורה AI מסביר...</span>:'🤖 הסבר מהמורה AI'}</button>:<div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl text-sm text-amber-100 leading-relaxed"><p className="font-black text-amber-400 mb-2">💡 הסבר המורה:</p><p className="whitespace-pre-wrap">{aiHint.replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1')}</p></div>}
-              <button onClick={nextQ} className="w-full bg-gradient-to-l from-blue-600 to-indigo-600 text-white font-black text-xl py-4 rounded-2xl shadow-[0_0_20px_rgba(79,142,247,0.3)] active:scale-95 transition-all mt-1">{qIdx+1<gameQuestions.length?'שאלה הבאה ←':'סיים סשן 🏁'}</button>
+              <button onClick={nextQ} className="w-full bg-gradient-to-l from-blue-600 to-indigo-600 text-white font-black text-xl py-4 rounded-2xl shadow-[0_0_20px_rgba(79,142,247,0.3)] active:scale-95 transition-all mt-6">{qIdx+1<gameQuestions.length?'שאלה הבאה ←':'סיים סשן 🏁'}</button>
             </div>
           )}
         </div>

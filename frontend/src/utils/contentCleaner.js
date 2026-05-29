@@ -93,6 +93,9 @@ export const cleanContentMd = (md) => {
   // שלב 3: תיקון פיסוק
   s = fixPunctuation(s);
 
+  // שלב 4: המרת בולטים לרשימות Markdown אמיתיות
+  s = s.replace(/^•\s*/gm, '- ');
+
   return s;
 };
 
